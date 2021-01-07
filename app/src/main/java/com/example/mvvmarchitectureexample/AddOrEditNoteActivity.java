@@ -12,11 +12,11 @@ import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.Toast;
 
-public class AddNote extends AppCompatActivity {
-
-    public static final String TITLE="com.example.mvvmarchitectureexample.TITLE";
-    public static final String DESCRIPTION="com.example.mvvmarchitectureexample.DESCRIPTION";
-    public static final String PRIORITY="com.example.mvvmarchitectureexample.PRIORITY";
+public class AddOrEditNoteActivity extends AppCompatActivity {
+    public static final String ID = "com.example.mvvmarchitectureexample.ID";
+    public static final String TITLE = "com.example.mvvmarchitectureexample.TITLE";
+    public static final String DESCRIPTION = "com.example.mvvmarchitectureexample.DESCRIPTION";
+    public static final String PRIORITY = "com.example.mvvmarchitectureexample.PRIORITY";
 
     private EditText editTextTitle;
     private EditText editTextDescription;
@@ -35,28 +35,39 @@ public class AddNote extends AppCompatActivity {
         numberPicker.setMaxValue(10);
 
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
-        setTitle("Add Note");
+
+        Intent i = getIntent();
+        if (i.hasExtra(ID)) {
+            setTitle("Edit Note");
+            editTextTitle.setText(i.getStringExtra(TITLE));
+            editTextDescription.setText(i.getStringExtra(DESCRIPTION));
+            numberPicker.setValue(i.getIntExtra(PRIORITY, 1));
+        } else
+            setTitle("Add Note");
 
     }
 
-    private void saveNote()
-    {
-        String title=editTextTitle.getText().toString();
-        String description=editTextDescription.getText().toString();
-        int priority=numberPicker.getValue();
+    private void saveNote() {
+        String title = editTextTitle.getText().toString();
+        String description = editTextDescription.getText().toString();
+        int priority = numberPicker.getValue();
 
-        if(title.trim().isEmpty() || description.trim().isEmpty())
-        {
-            Toast.makeText(this,"Please enter title or description",Toast.LENGTH_LONG).show();
+        if (title.trim().isEmpty() || description.trim().isEmpty()) {
+            Toast.makeText(this, "Please enter title or description", Toast.LENGTH_LONG).show();
             return;
         }
 
-        Intent data=new Intent();
-        data.putExtra(TITLE,title);
-        data.putExtra(DESCRIPTION,description);
-        data.putExtra(PRIORITY,priority);
+        Intent data = new Intent();
+        data.putExtra(TITLE, title);
+        data.putExtra(DESCRIPTION, description);
+        data.putExtra(PRIORITY, priority);
 
-        setResult(RESULT_OK,data);
+        int id = getIntent().getIntExtra(ID, -1);
+        if (id != -1) {
+            data.putExtra(ID, id);
+        }
+
+        setResult(RESULT_OK, data);
         finish();
     }
 
@@ -69,8 +80,7 @@ public class AddNote extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId())
-        {
+        switch (item.getItemId()) {
             case R.id.save_note:
                 saveNote();
                 return true;
