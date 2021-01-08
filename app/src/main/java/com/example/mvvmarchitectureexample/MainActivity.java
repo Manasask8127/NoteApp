@@ -57,7 +57,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChanged(List<Note> notes) {
                 //update recyclerview
-                adapter.setNotes(notes);
+                //adapter.setNotes(notes);
+                adapter.submitList(notes);
                 Toast.makeText(getApplicationContext(),"onchanged",Toast.LENGTH_LONG).show();
             }
         });
